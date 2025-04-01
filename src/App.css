@@ -27,6 +27,65 @@
 .App-link {
   color: #61dafb;
 }
+/* Style for the container */
+.container {
+  width: 300px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Style for form labels */
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Style for form inputs */
+.form-control {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Style for valid feedback */
+.valid-feedback {
+  display: none;
+  color: green;
+  margin-top: 5px;
+}
+
+/* Style for invalid feedback */
+.invalid-feedback {
+  display: none;
+  color: red;
+  margin-top: 5px;
+}
+
+/* Style for valid input */
+.form-control.is-valid {
+  border-color: green;
+}
+
+/* Style for invalid input */
+.form-control.is-invalid {
+  border-color: red;
+}
+
+/* Style for the submit button */
+.btn-primary {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
 
 @keyframes App-logo-spin {
   from {
@@ -36,3 +95,5 @@
     transform: rotate(360deg);
   }
 }
+
+

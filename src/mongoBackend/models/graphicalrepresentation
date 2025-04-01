@@ -1,0 +1,58 @@
++------------------+          +-----------------+         +-----------------+
+|    Category      |          |     Product     |         | ProductVariant  |
++------------------+          +-----------------+         +-----------------+
+| _id (ObjectId)   |<---------|category_id(Array)|<-------| product_id      |
+| name             |          | name            |         | sku             |
+| description      |          | description     |         | price           |
+| createdAt        |          | price           |         | stock           |
+| updatedAt        |          | is_active       |         | createdAt       |
++------------------+          | is_deleted      |         | updatedAt       |
+                              | createdAt       |         +-----------------+
+                              | updatedAt       |
+               <----------    | tags (Array)    |                                                               
+|    tags      |              +-----------------+  
++------------------+                |
+| _id (ObjectId)   |                |
+| name             |                |          
+| createdAt        |                |
+| updatedAt        |                |
++------------------+                |                       
+                                    v
+                          +------------------+
+                          | ProductOption    |
+                          +------------------+
+                          | product_id       |
+                          | option_id        |
+                          | createdAt        |
+                          | updatedAt        |
+                          +------------------+
+                                    |
+                                    v
+                              +-------------+
+                              |   Option    |
+                              +-------------+
+                              | _id         |
+                              | name        |
+                              | createdAt   |
+                              | updatedAt   |
+                              +-------------+
+                                    |
+                                    v
+                           +------------------+
+                           |  OptionValue     |
+                           +------------------+
+                           | option_id        |
+                           | value            |
+                           | createdAt        |
+                           | updatedAt        |
+                           +------------------+
+                                    |
+                                    v
+                           +------------------+
+                           | VariantOption    |
+                           +------------------+
+                           | variant_id       |
+                           | option_value_id  |
+                           | createdAt        |
+                           | updatedAt        |
+                           +------------------+
