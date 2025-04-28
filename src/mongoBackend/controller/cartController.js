@@ -1,5 +1,8 @@
 // controller/cartController.js
 const Cart = require("../models/Cart");
+const Order = require('../models/OrderSchema');
+
+
 const { Product } = require("../models/Products");
 const ProductVariant = require("../models/productVariantSchema");
 const stripe = require("stripe")(
@@ -186,7 +189,7 @@ exports.syncCart = async (req, res) => {
 exports.checkout = async (req, res) => {
   try {
     const { cart } = req.body;
-
+    const userId = req.user?.id; 
     const line_items = cart.items.map((item) => {
       const unitAmount =
         (item.variant ? item.variant.price : item.product.price) * 100;
@@ -212,6 +215,7 @@ exports.checkout = async (req, res) => {
       line_items,
       success_url: "http://localhost:3000/success",
       cancel_url: "http://localhost:3000/cancel",
+      client_reference_id : userId, 
     });
 
     res.status(200).json({ sessionId: session.url });
@@ -221,6 +225,95 @@ exports.checkout = async (req, res) => {
   }
 };
 
-exports.webhook = async(req,res) =>{
-  console.log('fdfd',req.body);
-}
+
+exports.webhook = async (req, res) => {
+  // console.log('🔔 Incoming Webhook Body:', JSON.stringify(req.body));
+
+  const event = req.body;
+  const session = event.data?.object;
+
+  if (event.type !== 'checkout.session.completed') {
+    return res.status(400).json({ message: 'Unhandled event type' });
+  }
+
+  const userId = session.client_reference_id;
+
+  try {
+    // 1. Get cart before deleting it
+    const cart = await Cart.findOne({ user: userId }).populate('items.product');
+    // console.log(cart)
+    if (!cart) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    // 2. Save Order
+    const newOrder = new Order({
+      user: userId,
+      stripeSessionId: session.id,
+      stripePaymentIntentId: session.payment_intent,
+      amount: session.amount_total,
+      currency: session.currency,
+      paymentStatus: session.payment_status,
+      items: cart.items.map(item => ({
+        product: item.product._id,
+        variant: item.variant,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      customer: {
+        name: session.customer_details.name,
+        email: session.customer_details.email,
+        address: {
+          line1: session.customer_details.address.line1,
+          line2: session.customer_details.address.line2,
+          city: session.customer_details.address.city,
+          state: session.customer_details.address.state,
+          postal_code: session.customer_details.address.postal_code,
+          country: session.customer_details.address.country,
+        }
+      },
+      status: 'pending', // or 'completed' based on your logic
+    });
+
+    await newOrder.save();
+
+    // for (const item of cart.items) {
+    //   if (item.variant) {
+    //     await ProductVariant.findByIdAndUpdate(
+    //       item.variant,
+    //       { $inc: { stock: -item.quantity } },
+    //       { new: true }
+    //     );
+    //   }
+    // }
+
+    await Cart.deleteOne({ user: userId });
+
+    res.status(200).json({ message: 'Order placed and cart cleared successfully' });
+  } catch (error) {
+    console.error('🔥 Error processing webhook:', error);
+    res.status(500).json({ message: 'Webhook processing failed' });
+  }
+};
+
+
+
+exports.getOrder = async (req, res) => {
+  try {
+    const userId = req.user.id; // assuming verifyToken adds user info to req.user
+
+    const orders = await Order.find({ user: userId })
+      .populate('items.product')         // populate product details
+      .populate('items.variant')         // populate variant details (if any)
+      .sort({ createdAt: -1 });          // most recent first
+
+    if (!orders.length) {
+      return res.status(404).json({ message: 'No orders found for this user.' });
+    }
+
+    res.status(200).json({ orders });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ message: 'Failed to fetch orders' });
+  }
+};

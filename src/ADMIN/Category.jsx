@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Form, Button, Alert } from 'react-bootstrap';
 
+
+const API_URL= process.env.REACT_APP_API_URL;
+// console.log(API_URL)
+
+
 const Category = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -14,7 +19,7 @@ const Category = () => {
     setSuccess(null);
 
     try {
-      const response = await axios.post('http://localhost:3001/api/category', { name, description });
+      const response = await axios.post(`${API_URL}/api/category`, { name, description });
       setSuccess('Category added successfully!');
       setName('');
       setDescription('');

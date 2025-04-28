@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Table, Button, Spinner, Alert, Container } from 'react-bootstrap';
+const API_URL= process.env.REACT_APP_API_URL;
+
+
 
 function List() {
   const [products, setProducts] = useState([]);
@@ -12,7 +15,7 @@ function List() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/product/');
+        const response = await axios.get(`${API_URL}/api/product/`);
         setProducts(response.data.products);
         setLoading(false);
       } catch (err) {
@@ -26,7 +29,7 @@ function List() {
 
   const handleDelete = async (productId) => {
     try {
-      const response = await axios.delete(`http://localhost:3001/api/product/${productId}`);
+      const response = await axios.delete(`${API_URL}/api/product/${productId}`);
       if (response.status === 200) {
         setProducts((prevProducts) =>
           prevProducts.filter((product) => product._id !== productId)

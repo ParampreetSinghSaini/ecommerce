@@ -4,6 +4,9 @@ import { useParams } from 'react-router-dom';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
+const API_URL= process.env.REACT_APP_API_URL;
+// console.log(API_URL)
+
 
 function CreateProduct() {
   const { productId } = useParams();
@@ -40,7 +43,7 @@ function CreateProduct() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/category');
+        const response = await fetch(`${API_URL}/api/category`);
         const data = await response.json();
 
         if (response.ok) {
@@ -60,7 +63,7 @@ function CreateProduct() {
   useEffect(() => {
     const fetchTags = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/product/tags');
+        const response = await fetch(`${API_URL}/api/product/tags`);
         const data = await response.json();
         if (response.ok) {
           // Map your tags to objects with 'value' and 'label' keys
@@ -81,7 +84,7 @@ function CreateProduct() {
     if (productId) {
       const fetchProduct = async () => {
         try {
-          const response = await fetch(`http://localhost:3001/api/product/${productId}`);
+          const response = await fetch(`${API_URL}/api/product/${productId}`);
           const data = await response.json();
           // console.log(data);
           if (response.ok) {
@@ -246,8 +249,8 @@ function CreateProduct() {
 
   const submitProduct = async () => {
     const apiUrl = productId
-      ? `http://localhost:3001/api/product/${productId}` // Edit endpoint
-      : 'http://localhost:3001/api/product'; // Add endpoint
+      ? `${API_URL}/api/product/${productId}` // Edit endpoint
+      : `${API_URL}/api/product`; // Add endpoint
 
     const method = productId ? 'PUT' : 'POST';
     const formdata = new FormData();

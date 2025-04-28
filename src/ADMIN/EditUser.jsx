@@ -7,6 +7,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
+
+const API_URL= process.env.REACT_APP_API_URL;
+
 export default function EditUser() {
   const navigate = useNavigate();
 
@@ -34,7 +37,7 @@ export default function EditUser() {
         try {
           
            
-          const response = await axios.get(`http://localhost:3001/api/product/${productId}`);
+          const response = await axios.get(`${API_URL}/api/product/${productId}`);
          
           const { name, category, image, new_Price, old_price } = response.data; // Assuming the fetched data is structured this way
           setName(name);
@@ -64,7 +67,7 @@ export default function EditUser() {
     
         try {
            
-          const response = await axios.put(`http://localhost:3001/api/product/${productId}`, formData, {
+          const response = await axios.put(`${API_URL}/api/product/${productId}`, formData, {
             
             headers: {
               'Content-Type': 'multipart/form-data'

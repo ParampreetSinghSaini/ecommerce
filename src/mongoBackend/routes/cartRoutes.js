@@ -13,6 +13,7 @@ router.post('/sync', verifyToken, cartController.syncCart);
 router.post('/checkout', verifyToken, cartController.checkout);
 router.post('/webhook', cartController.webhook);
 
+router.get('/getOrder', verifyToken, cartController.getOrder);
 
 module.exports = router;
 
