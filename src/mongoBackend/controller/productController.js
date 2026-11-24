@@ -7,7 +7,7 @@ const ProductVariant = require('../models/productVariantSchema');
 const VariantOption = require('../models/variantOptionSchema');
 const path = require('path');
 const fs = require('fs');
-
+const { parseFilter } = require('../utils/parseFilter');
 
 exports.addProduct = async (req, res) => {
    
@@ -184,10 +184,10 @@ exports.addProduct = async (req, res) => {
 
 exports.getProducts = async (req, res) => {
     try {
-        const { category } = req.query;
+        const { category, filter } = req.query;
 
-        // Fetch all products and populate category and tags fields
-        const products = await Product.find()
+        // Fetch products (optionally filtered) and populate category and tags fields
+        const products = await Product.find(parseFilter(filter))
             .populate('category_id', 'name')
             .populate('tags');
 
@@ -214,9 +214,7 @@ exports.getProducts = async (req, res) => {
                 .populate('product_id', 'name')
                 .exec();
 
-
-                const tagNames = product.tags ? product.tags.map(tag => tag.name) : [];
-
+            const tagNames = product.tags ? product.tags.map(tag => tag.name) : [];
 
             const variantDetails = [];
             for (const variant of variants) {
