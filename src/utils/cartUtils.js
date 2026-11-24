@@ -7,7 +7,7 @@ export const calculateCartTotal = (cartItems, products) => {
     if (quantity > 0) {
       const itemInfo = products.find((product) => product.id === Number(itemId));
       if (itemInfo) {
-        totalAmount += itemInfo.new_price * quantity;
+        totalAmount += itemInfo.old_price * quantity;
       }
     }
   }
